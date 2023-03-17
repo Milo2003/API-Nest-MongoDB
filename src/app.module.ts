@@ -10,6 +10,7 @@ import { ProductsModule } from './products/products.module';
 import { DatabaseModule } from './database/database.module';
 import axios from 'axios';
 import { environments } from './environments';
+import { AuthModule } from './auth/auth.module';
 import config from './config';
 
 @Module({
@@ -28,6 +29,7 @@ import config from './config';
     ProductsModule,
     HttpModule,
     DatabaseModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
