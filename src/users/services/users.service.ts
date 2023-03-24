@@ -2,24 +2,26 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 // import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import * as bcrypt from 'bcrypt';
+
 import { ProductsService } from 'src/products/services/products.service';
 import { CreateUserDto, UpdateUserDto } from '../dtos/users.dtos';
-// import { CreateUserDto, UpdateUserDto } from '../dtos/userModel.dtos';
 import { User } from '../entities/user.entety';
 
 @Injectable()
-export class userService {
+export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private productsService: ProductsService,
   ) {}
 
-  findAll() {
+  async findAll() {
     //solo ej
     // const apiKey = this.configService.get('API_KEY');
     // const dbName = this.configService.get('DATABASE_NAME');
     // console.log(apiKey, dbName);
-    return this.userModel.find().exec();
+    const users = await this.userModel.find();
+    return users;
   }
   findOne(id: string) {
     const user = this.userModel.findById(id);
@@ -28,9 +30,14 @@ export class userService {
     }
     return user;
   }
-  create(data: CreateUserDto) {
+  async create(data: CreateUserDto) {
+    const hashPassword = await bcrypt.hash(data.password, 10);
+    data.password = hashPassword;
     const newUser = new this.userModel(data);
-    return newUser.save();
+    const model = newUser.save();
+    // const { password, ...rta } = (await model).toJSON();
+    // return rta;  SOLO SIRVIO AL CREAR COMO EJ DE LA CLASE,
+    return model;
   }
   // create(payload: CreateUserDto) {
   //   const newUser = {
@@ -39,6 +46,11 @@ export class userService {
   //   this.userModel.create(newUser);
   //   return newUser;
   // }
+  async findByEmail(email: string) {
+    const emailUser = await this.userModel.findOne({ email });
+    return emailUser;
+  }
+
   delete(id: string) {
     const index = this.userModel.findByIdAndDelete(id).exec();
     if (!index) {

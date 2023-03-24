@@ -4,9 +4,13 @@ import { Model } from 'mongoose';
 
 import { CreateOrderDto, UpdateOrderDto } from '../dtos/orders.dtos';
 import { Order } from '../entities/order.entety';
+import { User } from '../entities/user.entety';
 @Injectable()
 export class OrdersService {
-  constructor(@InjectModel(Order.name) private orderModel: Model<Order>) {}
+  constructor(
+    @InjectModel(Order.name) private orderModel: Model<Order>,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) {}
 
   findAll() {
     return this.orderModel.find().populate('customer').populate('products');
@@ -51,5 +55,10 @@ export class OrdersService {
     }
     productsIds.forEach((pId) => order.products.addToSet(pId));
     return order.save();
+  }
+  async ordersByCustomer(userId: string) {
+    const user = await this.userModel.findById(userId);
+    const customerId = user.customer;
+    return this.orderModel.find({ customer: customerId }).populate('products');
   }
 }

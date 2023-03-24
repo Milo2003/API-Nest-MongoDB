@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+
 import { CreateCustomerDto, UpdateCustomerDto } from '../dtos/customers.dtos';
 import { Customer } from '../entities/customer.entety';
 
@@ -20,7 +21,6 @@ export class CustomersService {
     return customer;
   }
   create(data: CreateCustomerDto) {
-    console.log(data);
     const newCustomer = new this.customerModel(data);
     return newCustomer.save();
   }

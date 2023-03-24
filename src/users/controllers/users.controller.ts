@@ -6,16 +6,15 @@ import {
   Post,
   Delete,
   Put,
-  ParseIntPipe,
 } from '@nestjs/common';
 
-import { userService } from '../services/users.service';
+import { UsersService } from '../services/users.service';
 import { CreateUserDto, UpdateUserDto } from '../dtos/users.dtos';
 import { MongoIdPipe } from 'src/common/mongo-id.pipe';
 
 @Controller('users')
 export class UsersController {
-  constructor(private user: userService) {}
+  constructor(private user: UsersService) {}
 
   @Get()
   get() {
